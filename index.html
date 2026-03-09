@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Talks 2026</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    header {
+      background-color: #fff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .search-container {
+      margin-top: 10px;
+    }
+
+    #searchInput {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    #schedule-container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .talk-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .talk-card h2 {
+      margin-top: 0;
+      color: #0056b3;
+    }
+
+    .talk-time {
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .talk-speakers {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .talk-categories {
+      margin-bottom: 10px;
+    }
+
+    .talk-categories .category {
+      display: inline-block;
+      background-color: #e0eafc;
+      color: #0056b3;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+    
+    .break-card {
+      background-color: #e3f2fd;
+      border: 1px solid #bbdefb;
+      color: #0d47a1;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Tech Talks 2026</h1>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by category...">
+    </div>
+  </header>
+
+  <main id="schedule-container">
+    <!-- Schedule will be dynamically generated here -->
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const scheduleContainer = document.getElementById('schedule-container');
+      const searchInput = document.getElementById('searchInput');
+      const talksData = [
+        {
+          "title": "The Future of Artificial Intelligence",
+          "speakers": ["Jane Doe"],
+          "categories": ["AI", "Machine Learning"],
+          "description": "A deep dive into the latest advancements in AI and what we can expect in the coming years."
+        },
+        {
+          "title": "Building Scalable Web Applications",
+          "speakers": ["John Smith", "Peter Jones"],
+          "categories": ["Web Development", "Architecture"],
+          "description": "Learn the best practices for designing and building web applications that can handle millions of users."
+        },
+        {
+          "title": "Cybersecurity in a Connected World",
+          "speakers": ["Emily White"],
+          "categories": ["Security", "Networking"],
+          "description": "An overview of the current cybersecurity landscape and how to protect your systems from emerging threats."
+        },
+        {
+          "title": "The Power of Quantum Computing",
+          "speakers": ["Michael Green"],
+          "categories": ["Quantum Computing", "Future Tech"],
+          "description": "Explore the principles of quantum computing and its potential to revolutionize industries."
+        },
+        {
+          "title": "Mastering Cloud-Native Technologies",
+          "speakers": ["Sarah Brown"],
+          "categories": ["Cloud", "DevOps", "Kubernetes"],
+          "description": "A comprehensive guide to using cloud-native tools and techniques to build and deploy resilient applications."
+        },
+        {
+          "title": "The Ethics of AI and Automation",
+          "speakers": ["David Black", "Susan Blue"],
+          "categories": ["AI", "Ethics"],
+          "description": "A discussion on the ethical implications of artificial intelligence and automation in our society."
+        }
+      ];
+
+      const scheduleTimes = [
+        "10:00 AM - 11:00 AM",
+        "11:10 AM - 12:10 PM",
+        "12:20 PM - 01:20 PM",
+        "01:20 PM - 02:20 PM",
+        "02:20 PM - 03:20 PM",
+        "03:30 PM - 04:30 PM",
+        "04:40 PM - 05:40 PM"
+      ];
+
+      renderSchedule(talksData);
+
+      searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredTalks = talksData.filter(talk => 
+          talk.categories.some(category => category.toLowerCase().includes(searchTerm))
+        );
+        renderSchedule(filteredTalks, searchTerm);
+      });
+
+      function renderSchedule(talks, searchTerm = '') {
+        scheduleContainer.innerHTML = '';
+        let talkIndex = 0;
+        
+        const talksToDisplay = new Map();
+        talks.forEach(talk => talksToDisplay.set(talk.title, talk));
+
+        scheduleTimes.forEach((time, index) => {
+          if (index === 3) {
+            const breakCard = document.createElement('div');
+            breakCard.className = 'talk-card break-card';
+            breakCard.innerHTML = `<h2>Lunch Break</h2><div class="talk-time">${time}</div>`;
+            scheduleContainer.appendChild(breakCard);
+          } else {
+            const originalTalk = findTalkForSlot(talkIndex, talksData);
+            if (!originalTalk) return;
+
+            if (searchTerm && !talksToDisplay.has(originalTalk.title)) {
+               talkIndex++;
+               return;
+            }
+            
+            const talkCard = document.createElement('div');
+            talkCard.className = 'talk-card';
+
+            const categories = originalTalk.categories.map(cat => `<span class="category">${cat}</span>`).join('');
+
+            talkCard.innerHTML = `
+              <div class="talk-time">${time}</div>
+              <h2>${originalTalk.title}</h2>
+              <div class="talk-speakers">${originalTalk.speakers.join(', ')}</div>
+              <div class="talk-categories">${categories}</div>
+              <p>${originalTalk.description}</p>
+            `;
+            scheduleContainer.appendChild(talkCard);
+            talkIndex++;
+          }
+        });
+      }
+
+      function findTalkForSlot(talkIndex, allTalks) {
+        let actualTalkIndex = talkIndex;
+        if (talkIndex >= 3) {
+          actualTalkIndex = talkIndex
+        }
+        return allTalks[actualTalkIndex];
+      }
+    });
+  </script>
+</body>
+</html>
